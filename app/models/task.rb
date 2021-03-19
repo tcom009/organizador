@@ -12,4 +12,15 @@
 #
 class Task < ApplicationRecord
   belongs_to :category
+  belongs_to :owner, class_name: 'User'
+  validates :name, :description, presence: true
+  validates :name, uniqueness: { case_sensitive: false }
+  #custom validation 
+  validate :due_date_validator
+    
+  def due_date_validator
+    return if due_date.blank?
+    return if due_date > Date.today
+    errors.add :due_date, I18n.t('task.errors.due_date_invalid')
+  end
 end
